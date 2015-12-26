@@ -30,9 +30,11 @@ def register_port(prefix, port):
 def register_start_app(prefix, app_list):
     import tornado.web
     import tornado.httpserver
-    
-    if prefix in prefix_list:
+
+    try:
         unregister(prefix_list[prefix])
+    except KeyError:
+        pass
 
     application = tornado.web.Application(app_list)
     http_server = tornado.httpserver.HTTPServer(application)
@@ -57,8 +59,11 @@ def register_wsgi(prefix, handler):
         ])
 
 def unregister(port):
-    server_list[port].stop()
-    del server_list[port]
+    try:
+        server_list[port].stop()
+        del server_list[port]
+    except KeyError:
+        pass
 
 def unregister_all():
     for k, v in list(server_list.items()):
