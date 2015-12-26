@@ -13,7 +13,7 @@ proxy_private = 9011
 def get_port():
     myport = 9500
     while True:
-        if not myport in server_list.keys():
+        if not myport in list(server_list.keys()):
             return myport
         myport = myport + 1
 
@@ -45,14 +45,14 @@ def register_start_app(prefix, app_list):
 
 def register_tornado_handler(prefix, handler):
     return register_start_app(prefix, [
-        (prefix + "($|/.*$)", handler)
+        (r"^($|/.*$)", handler)
         ])
 
 def register_wsgi(prefix, handler):
     import tornado.wsgi
     container = tornado.wsgi.WSGIContainer(handler)
     return register_start_app(prefix, [
-        (prefix + "($|/.*$)",
+        (r"^($|/.*$)",
          tornado.web.FallbackHandler, dict(fallback=container))
         ])
 
